@@ -12,11 +12,10 @@
             font-family: 'Georgia', serif; overflow-x: hidden;
         }
 
-        /* 1. Play Button Overlay */
-        #play-overlay {
+        #play-overlay, #bunny-intro {
             position: fixed; width: 100%; height: 100%;
             background: #000; z-index: 700;
-            display: flex; justify-content: center; align-items: center;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
         }
 
         .start-btn {
@@ -27,29 +26,14 @@
             transition: 0.3s;
         }
 
-        /* 2. Bunny Intro Section */
-        #bunny-intro {
-            position: fixed; width: 100%; height: 100%;
-            background: radial-gradient(circle, #1a0505 0%, #000 100%);
-            display: none; flex-direction: column; justify-content: center;
-            align-items: center; z-index: 600; text-align: center;
-        }
-
-        .bunny-img {
-            width: 250px; 
-            filter: drop-shadow(0 0 15px rgba(255,255,255,0.3));
-            margin-bottom: 20px;
-        }
+        .bunny-img { width: 250px; filter: drop-shadow(0 0 15px rgba(255,255,255,0.3)); margin-bottom: 20px; }
 
         .speech-bubble {
-            background: white; color: black;
-            padding: 20px 30px; border-radius: 30px;
-            position: relative; font-size: 1.3rem;
-            max-width: 300px; box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-            opacity: 0; transition: opacity 0.5s;
+            background: white; color: black; padding: 20px 30px; border-radius: 30px;
+            position: relative; font-size: 1.3rem; max-width: 300px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.5s;
         }
 
-        /* 3. Movie Layers */
         .movie-container { position: relative; width: 100vw; height: 100vh; display: none; }
         
         .layer {
@@ -58,16 +42,14 @@
             opacity: 0; transition: opacity 2.5s ease-in-out, transform 15s linear;
         }
 
-        /* Make sure these files are .PNG or .JPEG in your folder */
+        /* Standardized to lowercase */
         #scene1 { background-image: url('scene1.png'); }
         #scene2 { background-image: url('scene2.png'); }
         #scene3 { background-image: url('scene3.png'); }
 
         .active { opacity: 1; transform: scale(1.15); }
 
-        .caption-box {
-            position: absolute; bottom: 12%; width: 100%; text-align: center; z-index: 10;
-        }
+        .caption-box { position: absolute; bottom: 12%; width: 100%; text-align: center; z-index: 10; }
 
         .subtitle {
             font-size: 1.5rem; background: rgba(0,0,0,0.75);
@@ -76,21 +58,9 @@
             border-left: 5px solid var(--love-red);
         }
 
-        /* 4. Real Gallery Section */
-        #real-gallery {
-            display: none; padding: 50px 20px;
-            background: linear-gradient(to bottom, #000, #1a0505);
-            text-align: center;
-        }
-        .gallery-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px; max-width: 1200px; margin: 0 auto;
-        }
-        .polaroid {
-            background: white; padding: 15px 15px 40px 15px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-            transform: rotate(-2deg); transition: 0.3s;
-        }
+        #real-gallery { display: none; padding: 50px 20px; background: linear-gradient(to bottom, #000, #1a0505); text-align: center; }
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto; }
+        .polaroid { background: white; padding: 15px 15px 40px 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); transform: rotate(-2deg); transition: 0.3s; }
         .polaroid img { width: 100%; height: auto; display: block; border: 1px solid #ddd; }
         
         .continue-btn {
@@ -112,7 +82,7 @@
     </div>
 
     <div id="bunny-intro">
-        <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHpueG5mNnFmZzRyeGZ5ZnZ4Z3R5Z3R5Z3R5Z3R5Z3R5Z3R5JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1z/3o7TKVUn7iM8FMEU24/giphy.gif" class="bunny-img" alt="Bunny with flowers">
+        <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHpueG5mNnFmZzRyeGZ5ZnZ4Z3R5Z3R5Z3R5Z3R5Z3R5Z3R5JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1z/3o7TKVUn7iM8FMEU24/giphy.gif" class="bunny-img">
         <div id="bubble" class="speech-bubble"></div>
     </div>
 
@@ -150,7 +120,7 @@
         function beginBunny() {
             document.getElementById('play-overlay').style.display = 'none';
             document.getElementById('bunny-intro').style.display = 'flex';
-            song.play();
+            song.play().catch(err => console.log("Audio play error:", err));
 
             const bunnyTalk = [
                 "Heey Weyombo😊...",
@@ -178,27 +148,24 @@
         }
 
         function startMainMovie() {
-            document.getElementById('bunny-intro').style.opacity = 0;
-            setTimeout(() => {
-                document.getElementById('bunny-intro').style.display = 'none';
-                document.getElementById('main-movie').style.display = 'flex';
-                runTimeline(0);
-            }, 1000);
+            document.getElementById('bunny-intro').style.display = 'none';
+            document.getElementById('main-movie').style.display = 'flex';
+            runTimeline(0);
         }
 
         const timeline = [
-            { scene: 'scene1', text: "I've been looking back at the good times we shared..." },
-            { scene: 'scene2', text: "I know I screwed things up. I hate that I let you down 🤦‍♂️." },
-            { scene: 'scene2', text: "But I've learned, Edisa. I want to make it right." },
-            { scene: 'scene3', text: " 😉 I Promise to hold you like this Always" },
-            { scene: 'scene3', text: "Happy Valentine's Day. I'm not letting go, the 💍 i gave you is a Promise 💍. ❤️" }
+            { id: 'scene1', text: "I've been looking back at the good times we shared..." },
+            { id: 'scene2', text: "I know I screwed things up. I hate that I let you down 🤦‍♂️." },
+            { id: 'scene2', text: "But I've learned, Edisa. I want to make it right." },
+            { id: 'scene3', text: " 😉 I Promise to hold you like this Always" },
+            { id: 'scene3', text: "Happy Valentine's Day. I'm not letting go, the 💍 i gave you is a Promise 💍. ❤️" }
         ];
 
         function runTimeline(index) {
             if (index < timeline.length) {
                 const step = timeline[index];
                 document.querySelectorAll('.layer').forEach(l => l.classList.remove('active'));
-                document.getElementById(step.scene).classList.add('active');
+                document.getElementById(step.id).classList.add('active');
 
                 const cap = document.getElementById('caption');
                 cap.style.opacity = 0;
@@ -211,7 +178,6 @@
                 const timing = (index === 1 || index === 2) ? 8000 : 6000;
                 setTimeout(() => runTimeline(index + 1), timing);
             } else {
-                // Show the final button
                 document.getElementById('final-continue').style.display = 'inline-block';
             }
         }
@@ -230,9 +196,7 @@
             document.body.appendChild(h);
             setTimeout(() => h.remove(), 4000);
         }
-        // Heart trigger
         setInterval(() => { if(document.getElementById('main-movie').style.display === 'flex') startHearts(); }, 400);
     </script>
 </body>
-
 </html>
