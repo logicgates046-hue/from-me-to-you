@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Edisa - From The Tribal Chief</title>
+    <style>
+        :root { --love-red: #ff4d6d; }
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: #000; color: white;
+            font-family: 'Georgia', serif; overflow-x: hidden;
+        }
+
+        /* 1. Play Button Overlay */
+        #play-overlay {
+            position: fixed; width: 100%; height: 100%;
+            background: #000; z-index: 700;
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        .start-btn {
+            padding: 20px 50px; font-size: 1.5rem;
+            background: var(--love-red); color: white;
+            border: none; border-radius: 50px; cursor: pointer;
+            box-shadow: 0 0 30px rgba(255, 77, 109, 0.6);
+            transition: 0.3s;
+        }
+
+        /* 2. Bunny Intro Section */
+        #bunny-intro {
+            position: fixed; width: 100%; height: 100%;
+            background: radial-gradient(circle, #1a0505 0%, #000 100%);
+            display: none; flex-direction: column; justify-content: center;
+            align-items: center; z-index: 600; text-align: center;
+        }
+
+        .bunny-img {
+            width: 250px; 
+            filter: drop-shadow(0 0 15px rgba(255,255,255,0.3));
+            margin-bottom: 20px;
+        }
+
+        .speech-bubble {
+            background: white; color: black;
+            padding: 20px 30px; border-radius: 30px;
+            position: relative; font-size: 1.3rem;
+            max-width: 300px; box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            opacity: 0; transition: opacity 0.5s;
+        }
+
+        /* 3. Movie Layers */
+        .movie-container { position: relative; width: 100vw; height: 100vh; display: none; }
+        
+        .layer {
+            position: absolute; width: 100%; height: 100%;
+            background-size: cover; background-position: center;
+            opacity: 0; transition: opacity 2.5s ease-in-out, transform 15s linear;
+        }
+
+        /* Make sure these files are .PNG or .JPEG in your folder */
+        #scene1 { background-image: url('scene1.PNG'); }
+        #scene2 { background-image: url('scene2.PNG'); }
+        #scene3 { background-image: url('scene3.PNG'); }
+
+        .active { opacity: 1; transform: scale(1.15); }
+
+        .caption-box {
+            position: absolute; bottom: 12%; width: 100%; text-align: center; z-index: 10;
+        }
+
+        .subtitle {
+            font-size: 1.5rem; background: rgba(0,0,0,0.75);
+            padding: 20px 40px; border-radius: 15px; display: inline-block; 
+            opacity: 0; transition: opacity 1s; max-width: 80%;
+            border-left: 5px solid var(--love-red);
+        }
+
+        /* 4. Real Gallery Section */
+        #real-gallery {
+            display: none; padding: 50px 20px;
+            background: linear-gradient(to bottom, #000, #1a0505);
+            text-align: center;
+        }
+        .gallery-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px; max-width: 1200px; margin: 0 auto;
+        }
+        .polaroid {
+            background: white; padding: 15px 15px 40px 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            transform: rotate(-2deg); transition: 0.3s;
+        }
+        .polaroid img { width: 100%; height: auto; display: block; border: 1px solid #ddd; }
+        
+        .continue-btn {
+            padding: 15px 40px; font-size: 1.3rem; margin-top: 30px;
+            background: var(--love-red); color: white; border: none;
+            border-radius: 50px; cursor: pointer; display: none;
+        }
+
+        .heart { position: fixed; color: var(--love-red); z-index: 100; animation: floatUp 4s linear forwards; }
+        @keyframes floatUp { to { transform: translateY(-110vh) rotate(360deg); opacity: 0; } }
+    </style>
+</head>
+<body>
+
+    <audio id="loveSong" loop><source src="music.MP3" type="audio/mpeg"></audio>
+
+    <div id="play-overlay">
+        <button class="start-btn" onclick="beginBunny()">Open Your Gift Edisa ❤️</button>
+    </div>
+
+    <div id="bunny-intro">
+        <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHpueG5mNnFmZzRyeGZ5ZnZ4Z3R5Z3R5Z3R5Z3R5Z3R5Z3R5JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1z/3o7TKVUn7iM8FMEU24/giphy.gif" class="bunny-img" alt="Bunny with flowers">
+        <div id="bubble" class="speech-bubble"></div>
+    </div>
+
+    <div class="movie-container" id="main-movie">
+        <div id="scene1" class="layer"></div>
+        <div id="scene2" class="layer"></div>
+        <div id="scene3" class="layer"></div>
+        
+        <div class="caption-box">
+            <div id="caption" class="subtitle"></div>
+            <br><br>
+            <button id="final-continue" class="continue-btn" onclick="showGallery()">Continue ☝️</button>
+        </div>
+    </div>
+
+    <div id="real-gallery">
+        <h2 style="font-size: 2.5rem; margin-bottom: 40px; color: var(--love-red);">Gallery</h2>
+        <div class="gallery-grid">
+            <div class="polaroid"><img src="real1.PNG"></div>
+            <div class="polaroid"><img src="real2.PNG"></div>
+            <div class="polaroid"><img src="real3.PNG"></div>
+            <div class="polaroid"><img src="real4.PNG"></div>
+            <div class="polaroid"><img src="real5.PNG"></div>
+            <div class="polaroid"><img src="real6.PNG"></div>
+            <div class="polaroid"><img src="real7.PNG"></div>
+            <div class="polaroid"><img src="real8.PNG"></div>
+        </div>
+        <p style="margin-top: 50px; font-style: italic;">Day ONE. I love you. ❤️</p>
+    </div>
+
+    <script>
+        const song = document.getElementById('loveSong');
+        const bubble = document.getElementById('bubble');
+        
+        function beginBunny() {
+            document.getElementById('play-overlay').style.display = 'none';
+            document.getElementById('bunny-intro').style.display = 'flex';
+            song.play();
+
+            const bunnyTalk = [
+                "Heey Weyombo😊...",
+                "How are you?",
+                "Tribal Chief made this for you ☝️",
+                "Here, take this bouquet... 💐",
+                "Now, watch this...",
+                "If you like it, blow a kiss to our Boy"
+            ];
+
+            let i = 0;
+            const cycleTalk = setInterval(() => {
+                bubble.style.opacity = 0;
+                setTimeout(() => {
+                    if(i < bunnyTalk.length) {
+                        bubble.innerText = bunnyTalk[i];
+                        bubble.style.opacity = 1;
+                        i++;
+                    } else {
+                        clearInterval(cycleTalk);
+                        startMainMovie();
+                    }
+                }, 500);
+            }, 3000);
+        }
+
+        function startMainMovie() {
+            document.getElementById('bunny-intro').style.opacity = 0;
+            setTimeout(() => {
+                document.getElementById('bunny-intro').style.display = 'none';
+                document.getElementById('main-movie').style.display = 'flex';
+                runTimeline(0);
+            }, 1000);
+        }
+
+        const timeline = [
+            { scene: 'scene1', text: "I've been looking back at the good times we shared..." },
+            { scene: 'scene2', text: "I know I screwed things up. I hate that I let you down 🤦‍♂️." },
+            { scene: 'scene2', text: "But I've learned, Edisa. I want to make it right." },
+            { scene: 'scene3', text: " 😉 I Promise to hold you like this Always" },
+            { scene: 'scene3', text: "Happy Valentine's Day. I'm not letting go, the 💍 i gave you is a Promise 💍. ❤️" }
+        ];
+
+        function runTimeline(index) {
+            if (index < timeline.length) {
+                const step = timeline[index];
+                document.querySelectorAll('.layer').forEach(l => l.classList.remove('active'));
+                document.getElementById(step.scene).classList.add('active');
+
+                const cap = document.getElementById('caption');
+                cap.style.opacity = 0;
+                setTimeout(() => {
+                    cap.innerText = step.text;
+                    cap.style.opacity = 1;
+                    if (index >= 3) startHearts();
+                }, 1000);
+
+                const timing = (index === 1 || index === 2) ? 8000 : 6000;
+                setTimeout(() => runTimeline(index + 1), timing);
+            } else {
+                // Show the final button
+                document.getElementById('final-continue').style.display = 'inline-block';
+            }
+        }
+
+        function showGallery() {
+            document.getElementById('main-movie').style.display = 'none';
+            document.getElementById('real-gallery').style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function startHearts() {
+            const h = document.createElement('div');
+            h.className = 'heart'; h.innerHTML = '❤️';
+            h.style.left = Math.random() * 100 + 'vw';
+            h.style.top = '100vh';
+            document.body.appendChild(h);
+            setTimeout(() => h.remove(), 4000);
+        }
+        // Heart trigger
+        setInterval(() => { if(document.getElementById('main-movie').style.display === 'flex') startHearts(); }, 400);
+    </script>
+</body>
+</html>
